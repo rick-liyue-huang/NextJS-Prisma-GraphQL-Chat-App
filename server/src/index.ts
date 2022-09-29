@@ -1,3 +1,4 @@
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import {
   ApolloServerPluginDrainHttpServer,
   ApolloServerPluginLandingPageLocalDefault,
@@ -5,8 +6,10 @@ import {
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import http from 'http';
+import { resolvers } from './graphql/resolvers';
+import { typeDefs } from './graphql/typeDefs';
 
-async function main(typeDefs, resolvers) {
+async function main() {
   // Required logic for integrating with Express
   const app = express();
   // Our httpServer handles incoming requests to our Express app.
@@ -14,11 +17,15 @@ async function main(typeDefs, resolvers) {
   // enabling our servers to shut down gracefully.
   const httpServer = http.createServer(app);
 
+  const schema = makeExecutableSchema({
+    typeDefs: typeDefs,
+    resolvers: resolvers,
+  });
+
   // Same ApolloServer initialization as before, plus the drain plugin
   // for our httpServer.
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    schema,
     csrfPrevention: true,
     cache: 'bounded',
     plugins: [
@@ -45,4 +52,4 @@ async function main(typeDefs, resolvers) {
   console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
 }
 
-main().catch((err) => console.log(err));
+main().catch((err: any) => console.log(err));

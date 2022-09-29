@@ -4,7 +4,7 @@ import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 import { theme } from '../chakra/theme';
-import client from '../lib/prismadb';
+import { client } from '../graphql/apollo-client';
 
 function MyApp({
   Component,
