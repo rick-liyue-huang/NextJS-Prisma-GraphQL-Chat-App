@@ -1,8 +1,10 @@
+import { ApolloProvider } from '@apollo/client';
 import { ChakraProvider } from '@chakra-ui/react';
 import { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import type { AppProps } from 'next/app';
 import { theme } from '../chakra/theme';
+import client from '../lib/prismadb';
 
 function MyApp({
   Component,
@@ -11,11 +13,13 @@ function MyApp({
   session: Session;
 }>) {
   return (
-    <SessionProvider session={pageProps.session}>
-      <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
-      </ChakraProvider>
-    </SessionProvider>
+    <ApolloProvider client={client}>
+      <SessionProvider session={pageProps.session}>
+        <ChakraProvider theme={theme}>
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </SessionProvider>
+    </ApolloProvider>
   );
 }
 
