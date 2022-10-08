@@ -3,6 +3,7 @@ import { Button, Center, Image, Input, Stack, Text } from '@chakra-ui/react';
 import { Session } from 'next-auth';
 import { signIn } from 'next-auth/react';
 import React, { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import {
   CreateUsernamePayload,
   CreateUsernameVariable,
@@ -20,21 +21,42 @@ export const AuthComponent: React.FC<Props> = ({ session, reloadSession }) => {
   /**
    * need to confirm the Type in useMutation, and the order of the type
    */
-  const [createUsername, { data, error, loading }] = useMutation<
+  const [createUsername, { /*data, */ error, loading }] = useMutation<
     CreateUsernamePayload,
     CreateUsernameVariable
   >(UserOperations.Mutations.createUsername);
 
-  console.log('here is data: ---', data, error, loading);
+  // console.log('here is data: ---', data, error, loading);
 
   const handleSubmit = async () => {
     if (!username) return;
     // graphql coding here
     try {
       // graphql coding mutation here
-      await createUsername({ variables: { username: username } });
-    } catch (err) {
+      const { data } = await createUsername({
+        variables: { username: username },
+      }); // same as the upper data in useMutation
+
+      if (!data?.createUsername) {
+        throw new Error();
+      }
+
+      if (data.createUsername.error) {
+        const {
+          createUsername: { error },
+        } = data;
+        throw new Error(error);
+      }
+
+      toast.success('Username created successfully');
+
+      // reload session to obtain new username
+      reloadSession();
+
+      // reload
+    } catch (err: any) {
       console.log('handleSubmit err: ', err);
+      toast.error(err?.message);
     }
   };
 

@@ -9,11 +9,16 @@ const Home: NextPage = () => {
   // after I click the button, it will create the new user and store it in mongoDB, because in pages/api/auth/[...nextauth].ts, it has PrismaAdapter(prisma), used to connect with mongoDB by 'schema.prisma'
   console.log('session: ', session);
 
-  const handleReloadSession = () => {};
+  // change it auto
+  const handleReloadSession = () => {
+    const event = new Event('visibilitychange');
+    document.dispatchEvent(event);
+  };
 
   return (
     <div>
       <Box>
+        {session?.user.username}
         {session?.user.username ? (
           <ChatComponent />
         ) : (
