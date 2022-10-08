@@ -3,6 +3,14 @@ export const userResolvers = {
     searchUsers: () => {},
   },
   Mutation: {
-    createUsername: () => {},
+    createUsername: (
+      parent: any,
+      { username }: { username: string },
+      context: any
+    ) => {
+      // console.log('username: ', username);
+      // communicate with mongodb
+      console.log('here is context: ', context);
+    },
   },
 };

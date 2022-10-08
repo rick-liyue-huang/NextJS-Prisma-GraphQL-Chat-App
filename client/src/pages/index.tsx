@@ -30,10 +30,12 @@ const Home: NextPage = () => {
 // by running this, we can get the data from server directly when refreshing page
 // You should use getServerSideProps only if you need to render a page whose data must be fetched at request time. This could be due to the nature of the data or properties of the request (such as authorization headers or geo location).
 export async function getServerSideProps(context: NextPageContext) {
-  const seesion = await getSession(context);
+  const session = await getSession(context);
+  console.log('session: --- getServerSideProps---', session);
+
   return {
     props: {
-      session: seesion,
+      session: session,
     },
   };
 }

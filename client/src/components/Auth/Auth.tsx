@@ -1,7 +1,13 @@
+import { useMutation } from '@apollo/client';
 import { Button, Center, Image, Input, Stack, Text } from '@chakra-ui/react';
 import { Session } from 'next-auth';
 import { signIn } from 'next-auth/react';
 import React, { useState } from 'react';
+import {
+  CreateUsernamePayload,
+  CreateUsernameVariable,
+} from '../../config/types';
+import { UserOperations } from '../../graphql/operations/user';
 
 interface Props {
   session: Session | null;
@@ -11,10 +17,22 @@ interface Props {
 export const AuthComponent: React.FC<Props> = ({ session, reloadSession }) => {
   const [username, setUsername] = useState('');
 
+  /**
+   * need to confirm the Type in useMutation, and the order of the type
+   */
+  const [createUsername, { data, error, loading }] = useMutation<
+    CreateUsernamePayload,
+    CreateUsernameVariable
+  >(UserOperations.Mutations.createUsername);
+
+  console.log('here is data: ---', data, error, loading);
+
   const handleSubmit = async () => {
+    if (!username) return;
     // graphql coding here
     try {
       // graphql coding mutation here
+      await createUsername({ variables: { username: username } });
     } catch (err) {
       console.log('handleSubmit err: ', err);
     }
