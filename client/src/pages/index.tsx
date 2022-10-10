@@ -18,9 +18,8 @@ const Home: NextPage = () => {
   return (
     <div>
       <Box>
-        {session?.user.username}
         {session?.user.username ? (
-          <ChatComponent />
+          <ChatComponent session={session} />
         ) : (
           <AuthComponent
             session={session}

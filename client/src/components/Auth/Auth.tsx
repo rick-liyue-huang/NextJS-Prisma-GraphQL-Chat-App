@@ -72,7 +72,7 @@ export const AuthComponent: React.FC<Props> = ({ session, reloadSession }) => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
-              <Button width={'100%'} onClick={handleSubmit}>
+              <Button width={'100%'} onClick={handleSubmit} isLoading={loading}>
                 Save
               </Button>
             </>
