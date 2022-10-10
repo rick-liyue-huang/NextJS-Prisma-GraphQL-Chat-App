@@ -12,10 +12,13 @@ import {
 } from '@chakra-ui/react';
 import React, { FormEvent, useState } from 'react';
 import {
+  SeachUserType,
   SearchUsersPayload,
   SearchUsersVariable,
 } from '../../../../config/types';
 import { UserOperations } from '../../../../graphql/operations/user';
+import { Participants } from './Participants';
+import { UserSearchList } from './UserSearchList';
 
 interface Props {
   isOpen: boolean;
@@ -24,6 +27,8 @@ interface Props {
 
 export const ConversationModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const [username, setUsername] = useState('');
+  const [participants, setParticipants] = useState<SeachUserType[]>([]);
+
   const [searchUsers, { data, loading, error }] = useLazyQuery<
     SearchUsersPayload,
     SearchUsersVariable
@@ -40,14 +45,23 @@ export const ConversationModal: React.FC<Props> = ({ isOpen, onClose }) => {
     });
   };
 
-  console.log('searchedUser: ', data);
+  const handleAddParticipant = (user: SeachUserType) => {
+    setParticipants((prev) => [...prev, user]);
+    setUsername('');
+  };
+
+  const handleRemoveParticipant = (userId: string) => {
+    setParticipants((prev) => prev.filter((p) => p.id !== userId));
+  };
+
+  // console.log('searchedUser: ', data);
 
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent bg="#eee" pb={4}>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Create on Conversation</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form onSubmit={handleSearch}>
@@ -62,6 +76,18 @@ export const ConversationModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 </Button>
               </Stack>
             </form>
+            {data?.searchUsers && (
+              <UserSearchList
+                users={data?.searchUsers}
+                handleAddParticipant={handleAddParticipant}
+              />
+            )}
+            {participants.length !== 0 && (
+              <Participants
+                participants={participants}
+                handleRemoveParticipant={handleRemoveParticipant}
+              />
+            )}
           </ModalBody>
         </ModalContent>
       </Modal>
